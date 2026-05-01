@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title> Cardio Predictor</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* BACKGROUND */
+body {
+    height: 100vh;
+    background: linear-gradient(-45deg, #ff0000, #8e2de2, #00c6ff, #ff6a00);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* BG ANIMATION */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* CONTAINER */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+     margin-left: 40px;
+
+    width: 80%;
+
+}
+
+
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    padding: 22px;
+    border-radius: 20px;
+
+    width: 520px;       
+    max-width: 85%;
+  
+
+    color: white;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+
+    animation: fadeInUp 1s ease;
+}
+
+/* ENTRY */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* GRID */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.full {
+    grid-column: span 2;
+}
+
+/* TEXT */
+h1 { margin-bottom: 10px; }
+h3 { margin-top: 15px; color: #00ffcc; }
+
+/* INPUT */
+input, select {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    transition: 0.2s;
+}
+
+/* INPUT EFFECT */
+input:hover, select:hover {
+    transform: scale(1.02);
+}
+
+input:focus, select:focus {
+    box-shadow: 0 0 10px #00c6ff,
+                0 0 20px #00c6ff;
+    transform: scale(1.03);
+}
+
+/* BUTTONS */
+.button-group {
+    grid-column: span 2;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #ff416c;
+    color: white;
+    cursor: pointer;
+
+    box-shadow: 0 0 10px #ff416c,
+                0 0 25px #ff4b2b;
+
+    animation: pulse 2s infinite;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.08) translateY(-2px);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.reset-btn {
+    background: #555;
+    box-shadow: 0 0 10px #888;
+}
+
+/* PULSE */
+@keyframes pulse {
+    0% { box-shadow: 0 0 10px #ff416c; }
+    50% { box-shadow: 0 0 30px #ff4b2b; }
+    100% { box-shadow: 0 0 10px #ff416c; }
+}
+
+/* CARD HOVER */
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* HEART */
+.image-box img {
+    width: 400px;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0px 20px 30px rgba(0,0,0,0.5));
+}
+
+
+
+@keyframes float {
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes rotateHeart {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h1> Cardio Predictor</h1>
+
+<form class="form-grid" action="/Predict" method="POST">
+
+<h3 class="full">Basic Info</h3>
+<input type="number" name="age_years" placeholder="Age" required>
+
+<select name="gender" required>
+  <option value="" disabled selected hidden>Gender</option>
+  <option value="1">Male</option>
+  <option value="2">Female</option>
+</select>
+
+<h3 class="full">Body Metrics</h3>
+<input type="number" name="height" placeholder="Height (cm)" required>
+<input type="number" name="weight" placeholder="Weight (kg)" required>
+
+<h3 class="full">Blood Pressure</h3>
+<input type="number" name="ap_hi" placeholder="Systolic BP" required>
+<input type="number" name="ap_lo" placeholder="Diastolic BP" required>
+
+<h3 class="full">Health Levels</h3>
+<select name="cholesterol" required>
+<option value="" disabled selected hidden>Cholesterol</option>
+<option value="1">Normal</option>
+<option value="2">Above Normal</option>
+<option value="3">High</option>
+</select>
+
+<select name="gluc" required>
+<option value="" disabled selected hidden>Glucose</option>
+<option value="1">Normal</option>
+<option value="2">Above Normal</option>
+<option value="3">High</option>
+</select>
+
+<h3 class="full">Lifestyle</h3>
+<select name="smoke" required>
+<option value="" disabled selected hidden>Smoking</option>
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+
+<select name="alco" required>
+<option value="" disabled selected hidden>Alcohol</option>
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+
+<select name="active" class="full" required>
+<option value="" disabled selected hidden>Physical Activity</option>
+<option value="1">Active</option>
+<option value="0">Not Active</option>
+</select>
+
+<div class="button-group">
+<button type="submit">Analyze ⚡</button>
+<button type="reset" class="reset-btn">Reset 🔄</button>
+</div>
+
+</form>
+
+
+<h3 style="margin-top:20px; color:#00ffcc;">
+    {{ prediction_text }}
+</h3>
+
+</form>
+</div>
+<div class="image-box">
+<img src="https://cdn-icons-png.flaticon.com/512/2966/2966484.png">
+</div>
+
+</div>
+
+</body>
+</html>
+
+
+
+
+
