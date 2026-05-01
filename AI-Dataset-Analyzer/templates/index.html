@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Data Analyst</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(135deg, #00a8ff, #9c88ff);
+            color: white;
+        }
+
+        .sidebar {
+            width: 260px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.15);
+            border-right: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 10px;
+        }
+
+        .sidebar p {
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        #fileName {
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        #loadingText {
+            display: none;
+            font-size: 13px;
+            color: yellow;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .title {
+            font-size: 60px;
+            font-weight: bold;
+            animation: colorChange 5s infinite alternate;
+        }
+
+        @keyframes colorChange {
+            0% { color: #fff; }
+            50% { color: #ffdd59; }
+            100% { color: #00ffcc; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>Upload Dataset</h2>
+    <p>Upload your CSV file</p>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" required>
+
+        <p id="fileName"></p>
+        <p id="loadingText">Processing file...</p>
+
+        <button type="submit" onclick="showLoading()">Analyze</button>
+    </form>
+</div>
+
+<div class="main">
+    <div style="padding:30px; background: rgba(255,255,255,0.2); border-radius:15px;">
+        <div class="title">AI Data Analyst 🚀</div>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById("fileInput");
+    const fileName = document.getElementById("fileName");
+
+    fileInput.addEventListener("change", function() {
+        if (this.files.length > 0) {
+            fileName.innerText = "Selected: " + this.files[0].name;
+        }
+    });
+
+    function showLoading() {
+        document.getElementById("loadingText").style.display = "block";
+    }
+</script>
+
+</body>
+</html>

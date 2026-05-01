@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+        }
+
+        img {
+            width: 600px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px;
+            background: green;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Data Analysis Result</h1>
+
+<div class="section">
+    <p><b>Rows:</b> {{ rows }}</p>
+    <p><b>Columns:</b> {{ cols }}</p>
+    <p><b>Missing:</b> {{ total_missing }}</p>
+    <p><b>Duplicates:</b> {{ duplicates }}</p>
+</div>
+
+<div class="section">
+    <h2>Preview</h2>
+    {{ preview | safe }}
+</div>
+
+<div class="section">
+    <h2>Numeric Analysis</h2>
+    <table>
+        <tr><th>Column</th><th>Mean</th><th>Min</th><th>Max</th></tr>
+        {% for col in numeric_analysis %}
+        <tr>
+            <td>{{ col.name }}</td>
+            <td>{{ col.mean }}</td>
+            <td>{{ col.min }}</td>
+            <td>{{ col.max }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="section">
+    <h2>Categorical Analysis</h2>
+    <table>
+        <tr><th>Column</th><th>Unique</th><th>Top</th></tr>
+        {% for col in categorical_analysis %}
+        <tr>
+            <td>{{ col.name }}</td>
+            <td>{{ col.unique }}</td>
+            <td>{{ col.top }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="section">
+    <h2>Outliers</h2>
+    <ul>
+        {% for col, val in outliers.items() %}
+            <li>{{ col }} : {{ val }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Visualizations</h2>
+
+    {% for p in plots %}
+        <div style="margin-bottom:30px; text-align:center;">
+            <img src="{{ url_for('static', filename=p) }}">
+        </div>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <h2>Insights</h2>
+    <ul>
+        {% for i in insights %}
+            <li>{{ i }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="section">
+    <a href="/download" class="btn">Download PDF Report</a>
+</div>
+
+</body>
+</html>
