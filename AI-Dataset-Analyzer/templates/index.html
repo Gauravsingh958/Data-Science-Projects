@@ -18,6 +18,7 @@
             color: white;
         }
 
+        /* SIDEBAR */
         .sidebar {
             width: 260px;
             padding: 30px;
@@ -27,13 +28,7 @@
         }
 
         .sidebar h2 {
-            margin-bottom: 10px;
-        }
-
-        .sidebar p {
-            font-size: 14px;
-            margin-bottom: 15px;
-            opacity: 0.8;
+            margin-bottom: 20px;
         }
 
         input[type="file"] {
@@ -41,7 +36,7 @@
             padding: 8px;
             border-radius: 8px;
             border: none;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         button {
@@ -53,41 +48,66 @@
             color: #333;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         button:hover {
             transform: scale(1.05);
         }
 
-        #fileName {
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        #loadingText {
-            display: none;
-            font-size: 13px;
-            color: yellow;
-        }
-
+        /* MAIN */
         .main {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            text-align: center;
         }
 
+        /* ANIMATED TITLE */
         .title {
-            font-size: 60px;
+            font-size: 70px;  /* 🔥 BADA SIZE */
             font-weight: bold;
             animation: colorChange 5s infinite alternate;
         }
 
         @keyframes colorChange {
-            0% { color: #fff; }
-            50% { color: #ffdd59; }
-            100% { color: #00ffcc; }
+            0% { color: #ffffff; }
+            25% { color: #ffdd59; }
+            50% { color: #00ffcc; }
+            75% { color: #ff6b6b; }
+            100% { color: #ffffff; }
+        }
+
+        .subtitle {
+            margin-top: 15px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .line {
+            width: 120px;
+            height: 4px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+
+        /* CARD */
+        .card {
+            margin-top: 40px;
+            padding: 25px;
+            width: 320px;
+            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
         }
 
     </style>
@@ -95,40 +115,31 @@
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>Upload Dataset</h2>
-    <p>Upload your CSV file</p>
+    <h2>📁 Upload Dataset</h2>
 
     <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" id="fileInput" required>
-
-        <p id="fileName"></p>
-        <p id="loadingText">Processing file...</p>
-
-        <button type="submit" onclick="showLoading()">Analyze</button>
+        <input type="file" name="file" required>
+        <button type="submit">Analyze</button>
     </form>
 </div>
 
+<!-- MAIN -->
 <div class="main">
-    <div style="padding:30px; background: rgba(255,255,255,0.2); border-radius:15px;">
-        <div class="title">AI Data Analyst 🚀</div>
+    <div class="title">📊 Smart Analysis Tool</div>
+     <p>Auto analysis, graphs, insights & outlier detection.</p>
+    <div class="line"></div>
+
+    <div class="subtitle">
+       Transform raw data into actionable business intelligence
+    </div>
+
+    <div class="card">
+        <h3>AI Data Analyst 🚀</h3>
+       <p>Upload dataset & get smart insights instantly.</p>
     </div>
 </div>
-
-<script>
-    const fileInput = document.getElementById("fileInput");
-    const fileName = document.getElementById("fileName");
-
-    fileInput.addEventListener("change", function() {
-        if (this.files.length > 0) {
-            fileName.innerText = "Selected: " + this.files[0].name;
-        }
-    });
-
-    function showLoading() {
-        document.getElementById("loadingText").style.display = "block";
-    }
-</script>
 
 </body>
 </html>

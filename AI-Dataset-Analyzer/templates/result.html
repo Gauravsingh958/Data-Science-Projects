@@ -1,134 +1,242 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Result</title>
+<title>AI Dashboard</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
-            background: #f4f4f4;
-        }
+<style>
 
-        h1 {
-            text-align: center;
-        }
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: linear-gradient(135deg,#00a8ff,#9c88ff);
+    color: white;
+}
 
-        .section {
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 40px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.header h1 {
+    font-size: 55px;
+    animation: glow 3s infinite alternate;
+}
 
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
+@keyframes glow {
+    from { text-shadow: 0 0 10px white; }
+    to { text-shadow: 0 0 30px cyan; }
+}
 
-        th {
-            background: #007BFF;
-            color: white;
-        }
+/* STATS */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
 
-        img {
-            width: 600px;
-            margin-top: 10px;
-        }
+.card {
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 15px;
+    width: 160px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+}
 
-        .btn {
-            display: inline-block;
-            padding: 10px;
-            background: green;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
+.card:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+/* SECTION */
+.section {
+    width: 85%;
+    margin: 40px auto;
+}
+
+/* GLASS BOX */
+.glass {
+    background: rgba(255,255,255,0.15);
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    margin-bottom: 40px;
+
+    animation: fadeUp 1s ease forwards;
+    opacity: 0;
+}
+
+/* ANIMATION */
+.glass:nth-child(1){animation-delay:0.2s;}
+.glass:nth-child(2){animation-delay:0.4s;}
+.glass:nth-child(3){animation-delay:0.6s;}
+.glass:nth-child(4){animation-delay:0.8s;}
+.glass:nth-child(5){animation-delay:1s;}
+.glass:nth-child(6){animation-delay:1.2s;}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* GRAPH IMAGE */
+.glass img {
+    width: 100%;
+    max-height: 380px;
+    object-fit: contain;
+    border-radius: 12px;
+    transition: 0.4s;
+}
+
+.glass img:hover {
+    transform: scale(1.05);
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.1);
+}
+
+table, th, td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px;
+    text-align: center;
+}
+
+/* INSIGHTS */
+.insights {
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+/* BUTTON */
+button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Data Analysis Result</h1>
-
-<div class="section">
-    <p><b>Rows:</b> {{ rows }}</p>
-    <p><b>Columns:</b> {{ cols }}</p>
-    <p><b>Missing:</b> {{ total_missing }}</p>
-    <p><b>Duplicates:</b> {{ duplicates }}</p>
+<div class="header">
+    <h1>🚀 AI Data Dashboard</h1>
 </div>
 
-<div class="section">
-    <h2>Preview</h2>
-    {{ preview | safe }}
+<!-- STATS -->
+<div class="stats">
+    <div class="card"><h2>{{rows}}</h2><p>Rows</p></div>
+    <div class="card"><h2>{{cols}}</h2><p>Columns</p></div>
+    <div class="card"><h2>{{total_missing}}</h2><p>Missing</p></div>
+    <div class="card"><h2>{{duplicates}}</h2><p>Duplicates</p></div>
 </div>
 
-<div class="section">
-    <h2>Numeric Analysis</h2>
+<!-- PREVIEW -->
+<div class="section glass">
+    <h2>📄 Dataset Preview</h2>
+    {{preview|safe}}
+</div>
+
+<!-- GRAPHS (ALL SEPARATE 🔥) -->
+
+<div class="section glass">
+    <h2>📊 Histogram</h2>
+    <img src="{{ url_for('static', filename='hist.png') }}">
+</div>
+
+<div class="section glass">
+    <h2>📊 Bar Chart</h2>
+    <img src="{{ url_for('static', filename='bar.png') }}">
+</div>
+
+<div class="section glass">
+    <h2>🔥 KDE Plot</h2>
+    <img src="{{ url_for('static', filename='kde.png') }}">
+</div>
+
+<div class="section glass">
+    <h2>📦 Box Plot</h2>
+    <img src="{{ url_for('static', filename='box.png') }}">
+</div>
+
+<div class="section glass">
+    <h2>📈 Heatmap</h2>
+    <img src="{{ url_for('static', filename='heatmap.png') }}">
+</div>
+
+<div class="section glass">
+    <h2>📊 Count Plot</h2>
+    <img src="{{ url_for('static', filename='count.png') }}">
+</div>
+
+<!-- NUMERIC -->
+<div class="section glass">
+    <h2>📊 Numeric Analysis</h2>
     <table>
         <tr><th>Column</th><th>Mean</th><th>Min</th><th>Max</th></tr>
         {% for col in numeric_analysis %}
         <tr>
-            <td>{{ col.name }}</td>
-            <td>{{ col.mean }}</td>
-            <td>{{ col.min }}</td>
-            <td>{{ col.max }}</td>
+            <td>{{col.name}}</td>
+            <td>{{col.mean}}</td>
+            <td>{{col.min}}</td>
+            <td>{{col.max}}</td>
         </tr>
         {% endfor %}
     </table>
 </div>
 
-<div class="section">
-    <h2>Categorical Analysis</h2>
+<!-- CATEGORICAL -->
+<div class="section glass">
+    <h2>📊 Categorical Analysis</h2>
     <table>
         <tr><th>Column</th><th>Unique</th><th>Top</th></tr>
         {% for col in categorical_analysis %}
         <tr>
-            <td>{{ col.name }}</td>
-            <td>{{ col.unique }}</td>
-            <td>{{ col.top }}</td>
+            <td>{{col.name}}</td>
+            <td>{{col.unique}}</td>
+            <td>{{col.top}}</td>
         </tr>
         {% endfor %}
     </table>
 </div>
 
-<div class="section">
-    <h2>Outliers</h2>
-    <ul>
-        {% for col, val in outliers.items() %}
-            <li>{{ col }} : {{ val }}</li>
+<!-- OUTLIERS -->
+<div class="section glass">
+    <h2>⚠ Outliers</h2>
+    <table>
+        <tr><th>Column</th><th>Count</th></tr>
+        {% for key, val in outliers.items() %}
+        <tr>
+            <td>{{key}}</td>
+            <td>{{val}}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </div>
 
-<div class="section">
-    <h2>Visualizations</h2>
-
-    {% for p in plots %}
-        <div style="margin-bottom:30px; text-align:center;">
-            <img src="{{ url_for('static', filename=p) }}">
-        </div>
-    {% endfor %}
-</div>
-
-<div class="section">
-    <h2>Insights</h2>
-    <ul>
-        {% for i in insights %}
-            <li>{{ i }}</li>
-        {% endfor %}
-    </ul>
-</div>
-
-<div class="section">
-    <a href="/download" class="btn">Download PDF Report</a>
+<!-- INSIGHTS -->
+<div class="section glass">
+    <h2>🤖 AI Insights</h2>
+    <div class="insights">
+        <ul>
+            {% for i in insights %}
+            <li>{{i}}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 </body>

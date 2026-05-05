@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Image
-from reportlab.lib.styles import getSampleStyleSheet
 
 app = Flask(__name__)
 
@@ -28,7 +25,7 @@ def upload():
     if not file:
         return "No file uploaded"
 
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
     df = pd.read_csv(filepath)
@@ -37,9 +34,9 @@ def upload():
     rows, cols = df.shape
     total_missing = int(df.isnull().sum().sum())
     duplicates = int(df.duplicated().sum())
+
     preview = df.head().to_html(index=False)
 
-    # COLUMN TYPES
     numeric_cols = df.select_dtypes(include='number').columns
     categorical_cols = df.select_dtypes(include='object').columns
 
@@ -56,11 +53,10 @@ def upload():
     # CATEGORICAL ANALYSIS
     categorical_analysis = []
     for col in categorical_cols:
-        top = df[col].mode()[0] if not df[col].mode().empty else "N/A"
         categorical_analysis.append({
             "name": col,
             "unique": df[col].nunique(),
-            "top": top
+            "top": df[col].mode()[0] if not df[col].mode().empty else "N/A"
         })
 
     # OUTLIERS
@@ -73,119 +69,90 @@ def upload():
         upper = Q3 + 1.5 * IQR
         outliers[col] = int(df[(df[col] < lower) | (df[col] > upper)].shape[0])
 
-    # -------- VISUALIZATIONS --------
-    plots = []
+    # -------- GRAPHS --------
 
-    # Histogram
+    # HISTOGRAM
     if len(numeric_cols) > 0:
-        plt.figure(figsize=(6,4))
+        plt.figure(figsize=(10,6))
         df[numeric_cols[0]].hist()
-        plt.title("Histogram")
+        plt.title(f"Histogram of {numeric_cols[0]}")
+        plt.tight_layout()
         plt.savefig("static/hist.png")
         plt.close()
-        plots.append("hist.png")
+
+    # BAR
+    if len(categorical_cols) > 0:
+        plt.figure(figsize=(10,6))
+        df[categorical_cols[0]].value_counts().head(10).plot(kind='bar')
+        plt.xticks(rotation=45)
+        plt.title(f"Top values of {categorical_cols[0]}")
+        plt.tight_layout()
+        plt.savefig("static/bar.png")
+        plt.close()
+
+    # HEATMAP
+    corr = df.select_dtypes(include='number').corr()
+    if not corr.empty:
+        plt.figure(figsize=(10,6))
+        sns.heatmap(corr, annot=True, cmap="coolwarm")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig("static/heatmap.png")
+        plt.close()
+
+    # BOX
+    if len(numeric_cols) > 0:
+        plt.figure(figsize=(12,6))
+        sns.boxplot(data=df[numeric_cols])
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig("static/box.png")
+        plt.close()
 
     # KDE
     if len(numeric_cols) > 0:
-        plt.figure(figsize=(6,4))
+        plt.figure(figsize=(10,6))
         sns.kdeplot(df[numeric_cols[0]], fill=True)
-        plt.title("KDE Plot")
+        plt.tight_layout()
         plt.savefig("static/kde.png")
         plt.close()
-        plots.append("kde.png")
 
-    # Boxplot
-    if len(numeric_cols) > 0:
-        plt.figure(figsize=(6,4))
-        sns.boxplot(x=df[numeric_cols[0]])
-        plt.title("Box Plot")
-        plt.savefig("static/box.png")
-        plt.close()
-        plots.append("box.png")
-
-    # Bar
+    # COUNT
     if len(categorical_cols) > 0:
-        plt.figure(figsize=(6,4))
-        df[categorical_cols[0]].value_counts().head(10).plot(kind='bar')
-        plt.title("Bar Chart")
-        plt.savefig("static/bar.png")
-        plt.close()
-        plots.append("bar.png")
-
-    # Countplot
-    if len(categorical_cols) > 0:
-        plt.figure(figsize=(6,4))
-        sns.countplot(x=df[categorical_cols[0]])
-        plt.xticks(rotation=45)
-        plt.title("Count Plot")
+        plt.figure(figsize=(10,6))
+        sns.countplot(y=df[categorical_cols[0]])
+        plt.tight_layout()
         plt.savefig("static/count.png")
         plt.close()
-        plots.append("count.png")
-
-    # Scatter
-    if len(numeric_cols) > 1:
-        plt.figure(figsize=(6,4))
-        plt.scatter(df[numeric_cols[0]], df[numeric_cols[1]])
-        plt.xlabel(numeric_cols[0])
-        plt.ylabel(numeric_cols[1])
-        plt.title("Scatter Plot")
-        plt.savefig("static/scatter.png")
-        plt.close()
-        plots.append("scatter.png")
-
-    # Heatmap
-    corr = df.select_dtypes(include='number').corr()
-    if not corr.empty:
-        plt.figure(figsize=(6,5))
-        sns.heatmap(corr, annot=True, cmap="coolwarm")
-        plt.title("Heatmap")
-        plt.savefig("static/heatmap.png")
-        plt.close()
-        plots.append("heatmap.png")
 
     # INSIGHTS
     insights = []
+
     if total_missing > 0:
-        insights.append("Dataset has missing values")
+        insights.append("Dataset contains missing values")
+
     if duplicates > 0:
-        insights.append("Dataset has duplicate rows")
+        insights.append("Duplicate rows found")
+
     for col, val in outliers.items():
         if val > 0:
             insights.append(f"{col} has {val} outliers")
 
-    if not insights:
+    if len(insights) == 0:
         insights.append("Dataset looks clean")
 
-    return render_template("result.html",
-                           rows=rows, cols=cols,
-                           total_missing=total_missing,
-                           duplicates=duplicates,
-                           preview=preview,
-                           numeric_analysis=numeric_analysis,
-                           categorical_analysis=categorical_analysis,
-                           outliers=outliers,
-                           insights=insights,
-                           plots=plots)
-
-
-# PDF DOWNLOAD
-@app.route('/download')
-def download():
-    pdf_path = "uploads/report.pdf"
-
-    doc = SimpleDocTemplate(pdf_path)
-    styles = getSampleStyleSheet()
-
-    elements = []
-    elements.append(Paragraph("AI Data Analysis Report", styles['Title']))
-
-    for img in os.listdir("static"):
-        if img.endswith(".png"):
-            elements.append(Image(f"static/{img}", width=400, height=250))
-
-    doc.build(elements)
-
-    return send_file(pdf_path, as_attachment=True)
+    return render_template(
+        "result.html",
+        rows=rows,
+        cols=cols,
+        total_missing=total_missing,
+        duplicates=duplicates,
+        preview=preview,
+        insights=insights,
+        numeric_analysis=numeric_analysis,
+        categorical_analysis=categorical_analysis,
+        outliers=outliers
+    )
 
 
 if __name__ == "__main__":
